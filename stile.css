@@ -27,6 +27,11 @@ body {
     border-radius: 50%;
     cursor: pointer;
 }
+
+.unlocked {
+    cursor: pointer;
+}
+
 .fa-circle {
     color: rgb(27, 223, 23);
 }
@@ -63,6 +68,29 @@ i {
 }
  
 #restart i:hover {
+    color: rgb(169, 80, 180);
+}
+
+#haste {
+    display: none;
+    width: 280px;
+    height: 250px;
+    position: absolute;
+    background-color: rgba(160, 165, 209, 0.568);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 30px;
+    line-height: 80px;
+}
+
+#makehaste {
+    margin: 40px;
+    cursor: pointer;
+}
+ 
+#makehaste i:hover {
     color: rgb(169, 80, 180);
 }
 
