@@ -195,6 +195,7 @@ $(document).ready(function () {
         if ((croce[index]==true)||(cerchio[index]==true)){
             busy = true;
         };
+        return busy;
     };
 
      
@@ -277,14 +278,12 @@ $(document).ready(function () {
                         turniPC ++;
                     }                    
                     break;
-                case 3:
-                    var check;
+                case 3:                    
                     mossa = counteratack();
                     if (mossa == 0) {
                         do {
-                            mossa=Math.floor(Math.random()*10);
-                            check = busy(mossa);
-                        } while ((check)||(mossa==0));
+                            mossa=Math.floor(Math.random()*10);                            
+                        } while ((busy(mossa))||(mossa==0));
                         scrivox(mossa);
                         turniPC ++;
                     }
