@@ -112,7 +112,7 @@ $(document).ready(function () {
 //_____________________________funzione che gestisce la prima contromossa____________________________
     function counteratack() {
         var counteratack = 0;
-        var corner = 0;        
+        var corner = 0;
         for (let k = 1; k <= 7; k=k+3) {                              /*scorro le righe per guardare*/
             if ((cerchio[k]==true)&&(cerchio[k+1]==true)) {           /*nelle prime due celle di ogni riga*/
                 if ((cerchio[k+2]==null)&&(croce[k+2]==null)) {       /*controllo che la cella di risposta sia libera*/
@@ -127,7 +127,7 @@ $(document).ready(function () {
                 }
                     croce[corner]=true;
                     counteratack=corner;
-                    return counteratack;                
+                    return counteratack;
             };
 
             if ((cerchio[k+1]==true)&&(cerchio[k+2]==true)) {           /*guardo nelle ultime due celle di ogni riga*/
@@ -198,53 +198,95 @@ $(document).ready(function () {
         return busy;
     };
 
-     
+//__________________________________cerco di completare il tris____________________________________
+    function almost() {
+        var almost;
+        for (var i = 1; i <= 9; i++) {
+            if (i!=5){
+                if ((croce[5]==true)&&(croce[i]==true)){
+                    switch (i) {
+                        case 3:
+                            almost=7;
+                            break;
+                        case 7:
+                            almost=3;
+                            break;
+                        case 1:
+                            almost=9;
+                            break;
+                        case 9:
+                            almost=1;
+                            break;
+                    }
+                    return almost;
+                };
+            }
+        };
+    };
+
+//___________________________________controllo chi vince_____________________________________
+    function checkwin() {
+        $('.cella').each(function(index) {
+            indice = index + 1;
+            if ($(this).children().hasClass("fa-circle")) {               //controllo se dove sono i cerchi                                        
+                cerchio[indice]=true;                                     //mi salvo le posizioni di dove sono i cerchi
+                if (areuwinning(cerchio,indice,"riga")){
+                    vittoria=true;
+                    printwin(cerchio);
+                }
+
+                if (areuwinning(cerchio,indice,"colonna")){
+                    vittoria=true;
+                    printwin(cerchio);
+                }
+
+                if (areuwinning(cerchio,indice,"diagonale")){
+                    vittoria=true;
+                    printwin(cerchio);
+                }
+            }
+            else if ($(this).children().hasClass("fa-times")) {         //controllo dove ci sono le croci
+                croce[indice]=true;                                     //mi salvo le posizioni dove sono le croci
+                if (areuwinning(croce,indice,"riga")) {
+                    vittoria=true;
+                    printwin(croce);
+                }
+
+                if (areuwinning(croce,indice,"colonna")) {
+                    vittoria=true;
+                    printwin(croce);
+                }                        
+
+                if (areuwinning(croce,indice,"diagonale")) {
+                    vittoria=true;
+                    printwin(croce);
+                }                        
+            };                
+        });
+    };
+
+//________________________________controllo che non ci sia una strategia__________________________________
+    function salto(array) {
+        var salto = 0;
+        if ((array[1])&&(array[3])){
+            salto=2;
+            return salto;
+        }
+        else if ((array[1])&&(array[7])) {
+            salto=4;
+            return salto;
+        }
+    }
+
+    
 //_______________________________________inizio il main_______________________________________
 
     cella.click(function() {
             if (!($(this).children().hasClass("fa-circle")) && !($(this).children().hasClass("fa-times"))) {   //controllo che la cella sia vuota                    
                 $(this).append("<i class='far fa-9x'></i>");               //aggiungo la classe per la dimensione
-                $(this).children("i").addClass("fa-circle");               //aggiungo il cerchio in una posizione specifica                
-            }
+                $(this).children("i").addClass("fa-circle");               //aggiungo il cerchio in una posizione specifica            
                                                                                
-            $('.cella').each(function(index) {
-                indice = index + 1;
-                if ($(this).children().hasClass("fa-circle")) {               //controllo se dove sono i cerchi                                        
-                    cerchio[indice]=true;                                     //mi salvo le posizioni di dove sono i cerchi
-                    if (areuwinning(cerchio,indice,"riga")){
-                        vittoria=true;
-                        printwin(cerchio);
-                    }
-
-                    if (areuwinning(cerchio,indice,"colonna")){
-                        vittoria=true;
-                        printwin(cerchio);
-                    }
-
-                    if (areuwinning(cerchio,indice,"diagonale")){
-                        vittoria=true;
-                        printwin(cerchio);
-                    }
-                }
-                else if ($(this).children().hasClass("fa-times")) {         //controllo dove ci sono le croci
-                    croce[indice]=true;                                     //mi salvo le posizioni dove sono le croci
-                    if (areuwinning(croce,indice,"riga")) {
-                        vittoria=true;
-                        printwin(croce);
-                    }
-
-                    if (areuwinning(croce,indice,"colonna")) {
-                        vittoria=true;
-                        printwin(croce);
-                    }                        
-
-                    if (areuwinning(croce,indice,"diagonale")) {
-                        vittoria=true;
-                        printwin(croce);
-                    }                        
-                };                
-            });
-            
+            checkwin();            
 
 //______________________________controllo che mossa viene fatta____________________________
    
@@ -263,34 +305,41 @@ $(document).ready(function () {
                         scrivox(5);
                     }
                     turniPC ++;
+                    checkwin();
                     break;
                 case 2:
-                    var mossa = counteratack();                      /*utilizzo un primo set di mosse per controbattere*/
+                    var mossa = counteratack();                      /*utilizzo un primo set di mosse per controbattere*/                
                     if (mossa == 0) {
-                        do {
-                            mossa=Math.floor(Math.random()*10);                            
-                        } while (((mossa != 1)&&(mossa != 3)&&(mossa != 7)&&(mossa != 9))||(mossa == 0));
+                        mossa = salto(cerchio);                        /*guardo che non stia già vincendo*/
+                        if (mossa==0){
+                            do {
+                                mossa=Math.floor(Math.random()*10);                            
+                            } while (((mossa != 1)&&(mossa != 3)&&(mossa != 7)&&(mossa != 9))||(mossa == 0)||(busy(mossa)));                        
+                        }
                         scrivox(mossa);
                         turniPC ++;
                     }
                     else {
                         scrivox(mossa);
                         turniPC ++;
-                    }                    
+                    }
+                    checkwin();
                     break;
                 case 3:                    
-                    mossa = counteratack();
-                    if (mossa == 0) {
+                    mossa = almost();                    
+                    if ((mossa == 0)||(busy(mossa))) {
                         do {
-                            mossa=Math.floor(Math.random()*10);                            
-                        } while ((busy(mossa))||(mossa==0));
+                            //mossa=Math.floor(Math.random()*10);
+                            mossa = counteratack();
+                        } while ((busy(mossa)==false));
                         scrivox(mossa);
                         turniPC ++;
                     }
                     else {
                         scrivox(mossa);
                         turniPC ++;
-                    }                                        
+                    }
+                    checkwin();
                     break;
                 /*case 4:
                     mossa = counteratack();
@@ -304,5 +353,5 @@ $(document).ready(function () {
                     break;*/
 
             };
-        }});
+    }}});
     });
