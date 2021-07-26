@@ -4,14 +4,15 @@ $(document).ready(function () {
     var vittoria = false;
     var cerchio = ["Cerchio!"];          //mi salvo il nome del giocatore in posizione 0 dell'array
     var croce = ["Croce!"];              //come sopra
-    var indice = 0;
+    var indice = 0;                      //inizializzo indici mosse e il contatore per i turni
     var turniPC = 1;
+    var mossa = 0;
 
-//______________________________funzione per controllare chi vince_____________________________
+//______________________________funzione per controllare chi vince leggendo gli array_____________________________
 
     function areuwinning(nome,j,geografia) {
         var areuwinning = false;
-        switch (geografia) {
+        switch (geografia) {                                                            //in base a che area del tris devo controllare, faccio differenti controlli
             case "riga":
                 for (j = 2; j <= 8; j=j+3) {
                      if ((nome[j-1]==true)&&(nome[j]==true)&&(nome[j+1]==true))
@@ -38,18 +39,18 @@ $(document).ready(function () {
 
 //______________________________funzione per stampare chi vince______________________________
 
-    function printwin(nome){
+    function printwin(nome){                                        //scrivo chi vince con una funzione che rende visibile roba in HTML
          $('.cella').addClass('locked');
          $('#result').children('span').html(nome[0]);
          $('#result').fadeIn(250);
-         $('#restart').click(function(){
+         $('#restart').click(function(){                            //ricarico la pagina per giocare nuovamente
              location.reload();
          });
     };
 
 //________________________________funzione per scrivere la X________________________________
 
-    function scrivox(numero){
+    function scrivox(numero){                                       //funzione per posizionare la x nella cella interessata
         $('.cella').each(function(index){
             if (index == (numero-1)){
                 $(this).append("<i class='fas fa-9x'></i>");
@@ -191,7 +192,7 @@ $(document).ready(function () {
 
 //_______________________________verifico se una cella è occupata_____________________________
     function busy(index) {
-        var busy = false
+        var busy = false;
         if ((croce[index]==true)||(cerchio[index]==true)){
             busy = true;
         };
@@ -200,11 +201,11 @@ $(document).ready(function () {
 
 //__________________________________cerco di completare il tris____________________________________
     function almost() {
-        var almost;
-        for (var i = 1; i <= 9; i++) {
-            if (i!=5){
+        var almost=0;
+        for (var i = 1; i <= 9; i++) {                                          //controllo dal centro a tutto intorno 
+            if (i!=5){                                                          //che ci sia un inizio di tris
                 if ((croce[5]==true)&&(croce[i]==true)){
-                    switch (i) {
+                    switch (i) {                                                //controllo la posizione centrale
                         case 3:
                             almost=7;
                             break;
@@ -220,7 +221,7 @@ $(document).ready(function () {
                     }
                     return almost;
                 };
-            }
+            };
         };
     };
 
@@ -266,16 +267,33 @@ $(document).ready(function () {
     };
 
 //________________________________controllo che non ci sia una strategia__________________________________
-    function salto(array) {
+    function salto(array,nemico) {
         var salto = 0;
         if ((array[1])&&(array[3])){
-            salto=2;
-            return salto;
+            if ((array[2]==null)&&(nemico[2]==null)){
+                salto=2;
+                return salto;
+            }
         }
-        else if ((array[1])&&(array[7])) {
-            salto=4;
-            return salto;
+        if ((array[1])&&(array[7])) {
+            if ((array[4]==null)&&(nemico[4]==null)){            
+                salto=4;
+                return salto;
+            }
         }
+        if ((array[9])&&(array[3])){
+            if ((array[6]==null)&&(nemico[6]==null)){
+                salto=6;
+                return salto;
+            }
+        }
+        else if ((array[9])&&(array[7])){
+            if ((array[8]==null)&&(nemico[8]==null)){
+                salto=8;
+                return salto;
+            }
+        }
+        return salto;
     }
 
     
@@ -308,10 +326,10 @@ $(document).ready(function () {
                     checkwin();
                     break;
                 case 2:
-                    var mossa = counteratack();                      /*utilizzo un primo set di mosse per controbattere*/                
+                    mossa = counteratack();                      /*utilizzo un primo set di mosse per controbattere*/                
                     if (mossa == 0) {
-                        mossa = salto(cerchio);                        /*guardo che non stia già vincendo*/
-                        if (mossa==0){
+                        mossa = salto(cerchio,croce);                        /*guardo che non stia già vincendo*/
+                        if (mossa == 0){
                             do {
                                 mossa=Math.floor(Math.random()*10);                            
                             } while (((mossa != 1)&&(mossa != 3)&&(mossa != 7)&&(mossa != 9))||(mossa == 0)||(busy(mossa)));                        
@@ -325,13 +343,15 @@ $(document).ready(function () {
                     }
                     checkwin();
                     break;
-                case 3:                    
+                case 3:
                     mossa = almost();                    
                     if ((mossa == 0)||(busy(mossa))) {
-                        do {
-                            //mossa=Math.floor(Math.random()*10);
-                            mossa = counteratack();
-                        } while ((busy(mossa)==false));
+                        mossa = counteratack();
+                        if (mossa==0) {
+                            do {
+                                mossa=Math.floor(Math.random()*10);                            
+                            } while ((busy(mossa)!=false)&&(mossa==0));
+                        }
                         scrivox(mossa);
                         turniPC ++;
                     }
@@ -341,17 +361,12 @@ $(document).ready(function () {
                     }
                     checkwin();
                     break;
-                /*case 4:
-                    mossa = counteratack();
+                case 4:
+                    mossa = salto(cerchio,croce);
                     scrivox(mossa);
                     turniPC++;
+                    checkwin();
                     break;
-                case 5:
-                    mossa = counteratack();
-                    scrivox(mossa);
-                    turniPC++;
-                    break;*/
-
             };
     }}});
     });
