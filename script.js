@@ -344,21 +344,26 @@ $(document).ready(function () {
                     checkwin();
                     break;
                 case 3:
-                    mossa = almost();                    
-                    if ((mossa == 0)||(busy(mossa))) {
-                        mossa = counteratack();
-                        if (mossa==0) {
-                            do {
-                                mossa=Math.floor(Math.random()*10);                            
-                            } while ((busy(mossa)!=false)&&(mossa==0));
+                    mossa = almost();
+                    if (mossa == 0) {                    
+                    mossa = salto(cerchio,croce);                    
+                        if ((mossa == 0)||(busy(mossa))) {
+                            mossa = counteratack();
+                            if (mossa==0) {
+                                do {
+                                    mossa=Math.floor(Math.random()*10);
+                                } while ((busy(mossa)!=false)||(mossa==0));
+                            }
+                            scrivox(mossa);
+                            turniPC ++;
                         }
-                        scrivox(mossa);
-                        turniPC ++;
+                        else {
+                            /*scrivox(mossa);
+                            turniPC ++;*/
+                        }                        
                     }
-                    else {
-                        scrivox(mossa);
-                        turniPC ++;
-                    }
+                    scrivox(mossa);
+                    turniPC ++;
                     checkwin();
                     break;
                 case 4:
