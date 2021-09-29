@@ -6,7 +6,7 @@ $(document).ready(function () {
     var croce = ["Croce!"];              //come sopra
     var indice = 0;                      //inizializzo indici mosse e il contatore per i turni
     var turniPC = 1;
-    var mossa = 0;
+    var mossa = 0; 
 
 //______________________________funzione per controllare chi vince leggendo gli array_____________________________
 
@@ -229,7 +229,7 @@ $(document).ready(function () {
     function checkwin() {
         $('.cella').each(function(index) {
             indice = index + 1;
-            if ($(this).children().hasClass("fa-circle")) {               //controllo se dove sono i cerchi                                        
+            if ($(this).children().hasClass("fa-circle")) {               //controllo dove sono i cerchi                                        
                 cerchio[indice]=true;                                     //mi salvo le posizioni di dove sono i cerchi
                 if (areuwinning(cerchio,indice,"riga")){
                     vittoria=true;
@@ -267,9 +267,9 @@ $(document).ready(function () {
     };
 
 //________________________________controllo che non ci sia una strategia__________________________________
-    function salto(array,nemico) {
+    function salto(array,nemico) {                                  
         var salto = 0;
-        if ((array[1])&&(array[3])){
+        if ((array[1])&&(array[3])){                                //verifico gli esterni di ogni riga e colonna
             if ((array[2]==null)&&(nemico[2]==null)){
                 salto=2;
                 return salto;
@@ -294,41 +294,40 @@ $(document).ready(function () {
             }
         }
         return salto;
-    }
+    };
 
     
 //_______________________________________inizio il main_______________________________________
 
     cella.click(function() {
-            if (!($(this).children().hasClass("fa-circle")) && !($(this).children().hasClass("fa-times"))) {   //controllo che la cella sia vuota                    
-                $(this).append("<i class='far fa-9x'></i>");               //aggiungo la classe per la dimensione
-                $(this).children("i").addClass("fa-circle");               //aggiungo il cerchio in una posizione specifica            
-                                                                               
+            if (!($(this).children().hasClass("fa-circle")) && !($(this).children().hasClass("fa-times"))) {    //controllo che la cella sia vuota                    
+                $(this).append("<i class='far fa-9x'></i>");                                                    //aggiungo la classe per la dimensione
+                $(this).children("i").addClass("fa-circle");                                                    //aggiungo il cerchio in una posizione specifica                                                                                           
             checkwin();            
 
 //______________________________controllo che mossa viene fatta____________________________
    
     if (vittoria==false) {
             switch (turniPC) {
-                case 1:
-                    if (cerchio[5]==true) {                                    /*randomizzo il primo tiro*/
-                        do {                                                   /*se la posizione centrale è già occupata*/ 
+                case 1:                                                        //controllo a che mossa siamo
+                    if (cerchio[5]==true) {                                    //randomizzo il primo tiro
+                        do {                                                   //se la posizione centrale è già occupata 
                             var numero = Math.floor(Math.random()*10);
                         } while ((numero == 0)||(numero == 5));
                         croce[numero] = true;
                         scrivox(numero);
                     }
                     else {
-                        croce[5]=true;                               /*altrimenti occupo la posizione centrale*/
+                        croce[5]=true;                                          //altrimenti occupo la posizione centrale
                         scrivox(5);
                     }
                     turniPC ++;
                     checkwin();
                     break;
                 case 2:
-                    mossa = counteratack();                      /*utilizzo un primo set di mosse per controbattere*/                
+                    mossa = counteratack();                                     //utilizzo un primo set di mosse per controbattere
                     if (mossa == 0) {
-                        mossa = salto(cerchio,croce);                        /*guardo che non stia già vincendo*/
+                        mossa = salto(cerchio,croce);                           //guardo che non stia già vincendo
                         if (mossa == 0){
                             do {
                                 mossa=Math.floor(Math.random()*10);                            
@@ -345,8 +344,8 @@ $(document).ready(function () {
                     break;
                 case 3:
                     mossa = almost();
-                    if (mossa == 0) {                    
-                    mossa = salto(cerchio,croce);                    
+                    if (mossa == 0) {
+                    mossa = salto(cerchio,croce);
                         if ((mossa == 0)||(busy(mossa))) {
                             mossa = counteratack();
                             if (mossa==0) {
@@ -360,7 +359,7 @@ $(document).ready(function () {
                         else {
                             /*scrivox(mossa);
                             turniPC ++;*/
-                        }                        
+                        }
                     }
                     scrivox(mossa);
                     turniPC ++;
